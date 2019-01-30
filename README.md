@@ -8,9 +8,9 @@
 
 ## Components
 
-![Components](/resource/components.png?raw=true)
+![Components](/out/components.png?raw=true)
 
 ## Sequence
 
-![Sequence](/resource/sequence.png?raw=true)
+![Sequence](/out/sequence.png?raw=true)
 
