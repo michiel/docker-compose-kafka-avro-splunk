@@ -7,33 +7,32 @@ package Support {
 	component "Zookeeper" as zookeeper
   component "Schema Registry" as schemaregistry
 }
-interface "Zookeeper\nClient Port\nTCP/32181" as zookeeper_clientport
-interface "Advertised Listeners\nTCP/29092" as advertisedlisteners
+interface "TCP/29092" as advertisedlisteners
 
 package Kafka {
   component "Kafka" as kafka
 }
 
 package Connect {
-  component "Connect - JDBC" as connect
+  component "Connect - JDBC" as connect_jdbc
   component "Connect - Splunk" as connect_splunk
 }
 
 component "MySQL" as mysql
 component "Splunk" as splunk
 
-kafka -u-> zookeeper_clientport
-zookeeper_clientport -u-> zookeeper
+kafka -u-> zookeeper
 
 advertisedlisteners -> kafka
-connect -u-> advertisedlisteners
+connect_jdbc -u-> advertisedlisteners
 connect_splunk -u-> advertisedlisteners
 schemaregistry -d-> advertisedlisteners
 
-connect -d-> mysql
-connect -> kafka
+connect_jdbc -d-> mysql
+connect_jdbc -> kafka
+connect_jdbc -u-> schemaregistry
 connect_splunk -> kafka
-
 connect_splunk -d-> splunk
+connect_splunk -u-> schemaregistry
 
 @enduml
