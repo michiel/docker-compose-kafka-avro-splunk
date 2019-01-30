@@ -75,3 +75,24 @@ services:
       CONTROL_CENTER_REPLICATION_FACTOR: 1
       CONTROL_CENTER_CONNECT_CLUSTER: http://control-center:28082
 
+  mysql:
+    image: mysql:8.0
+    environment:
+      MYSQL_ROOT_PASSWORD: confluent
+      MYSQL_USER: confluent
+      MYSQL_PASSWORD: confluent
+      MYSQL_DATABASE: connect_test
+    volumes:
+      - './resource/sql:/docker-entrypoint-initdb.d'
+
+  splunk:
+    image: splunk/splunk:7.0.3
+    environment:
+      SPLUNK_START_ARGS: --accept-license
+      SPLUNK_CMD: 'edit user admin -password admin -role admin -auth admin:changeme'
+      SPLUNK_ENABLE_LISTEN: 9997
+    ports:
+      - 8000:8000
+    volumes:
+      - './resource/splunk_app:/opt/splunk/etc/apps/splunk_app'
+

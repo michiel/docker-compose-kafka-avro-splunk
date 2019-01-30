@@ -1,0 +1,55 @@
+@startuml
+
+scale 2
+
+box "Source" #AntiqueWhite
+	entity "MySQL" as mysql
+end box
+
+box "Support" #White
+  entity "Zookeeper" as zookeeper
+  entity "Schema Registry" as schemaregistry
+end box
+
+box "Kafka" #LightBlue
+  entity "Server" as kafka
+  database "Topic A" as topic_a
+end box
+
+box "Connect" #LightGreen
+  entity "Connect - JDBC" as connect_jdbc
+  entity "Connect - Splunk" as connect_splunk
+end box
+
+box "Sink" #AntiqueWhite
+	entity "Splunk" as splunk
+end box
+
+== Configuration ==
+
+kafka -> zookeeper : Query
+schemaregistry -> kafka : PUT
+
+connect_jdbc -> schemaregistry : PUT
+connect_splunk -> schemaregistry : GET
+
+== Data flow ==
+
+loop yay
+  connect_jdbc -> mysql : GET
+  activate connect_jdbc
+    connect_jdbc -> connect_jdbc : Transform
+    connect_jdbc -> topic_a : PUT
+  deactivate connect_jdbc
+end loop
+
+loop yay
+  connect_splunk -> topic_a : GET
+
+  activate connect_splunk
+    connect_splunk -> connect_splunk : Transform
+    connect_splunk -> splunk : PUT
+  deactivate connect_splunk
+end loop
+
+@enduml
