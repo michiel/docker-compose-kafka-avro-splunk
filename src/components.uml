@@ -1,0 +1,32 @@
+@startuml
+
+skinparam componentStyle uml2
+skinparam linetype ortho
+
+component "Zookeeper" as zookeeper
+interface "Zookeeper\nClient Port\nTCP/32181" as zookeeper_clientport
+package Kafka {
+  component "Kafka" as kafka
+  interface "Advertised Listeners\nTCP/29092" as advertisedlisteners
+  component "Schema Registry" as schemaregistry
+  component "Connect - Avro" as connect
+  component "Connect - Splunk" as connect_splunk
+}
+
+component "MySQL" as mysql
+component "Splunk" as splunk
+
+kafka -d-> zookeeper_clientport
+zookeeper_clientport -d-> zookeeper
+
+advertisedlisteners -d-> kafka
+connect -l-> advertisedlisteners
+connect_splunk -l-> advertisedlisteners
+schemaregistry -r-> advertisedlisteners
+
+connect -u-> mysql
+connect -d-> kafka
+
+connect_splunk -d-> splunk
+
+@enduml
